@@ -54,3 +54,15 @@ curl -XGET http://localhost:8080/assets
 curl -XGET http://localhost:8080/stocks
 curl -XGET http://localhost:8080/users
 ```
+
+添加数据模型类：定义 StockInfo 和 UserInfo 数据模型类。
+修改 MainActivity.kt：在 onCreate 中调用 /stocks 和 /users 接口。
+修改 ApiService.kt：添加对应的 API 方法。
+修改 StockViewModel.kt：添加加载数据的方法。
+android_app/app/src/main/java/com/example/stockapp/ui/MainActivity.kt
+
+android_app/app/src/main/java/com/example/stockapp/adapter/StockAdapter.kt
+
+android_app/app/src/main/res/layout/item_stock.xml
+android_app/app/src/main/res/layout/activity_main.xml
+修改 activity_main.xml：添加用于展示数据的 RecyclerView。

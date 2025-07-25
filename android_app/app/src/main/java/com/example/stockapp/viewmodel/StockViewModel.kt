@@ -4,45 +4,38 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LiveData
-import com.example.stockapp.ui.BuyRequest
-import com.example.stockapp.network.RetrofitClient
+import com.example.stockapp.network.ApiService
+import com.example.stockapp.ui.StockInfo
+import com.example.stockapp.ui.UserInfo
 import kotlinx.coroutines.launch
 
-// 封装结果为 sealed class 提升类型安全
-sealed class Result<out T> {
-    data class Success<out T>(val data: T) : Result<T>()
-    data class Error(val exception: Exception) : Result<Nothing>()
-}
-
 class StockViewModel : ViewModel() {
+    private val _stocks = MutableLiveData<Map<String, StockInfo>?>()
+    val stocks: LiveData<Map<String, StockInfo>?> get() = _stocks
 
-    // 使用封装的 Result 类型来统一处理结果
-    private val _buyResult = MutableLiveData<Result<String>>()
-    val buyResult: LiveData<Result<String>> get() = _buyResult
+    private val _users = MutableLiveData<Map<String, UserInfo>?>()
+    val users: LiveData<Map<String, UserInfo>?> get() = _users
 
-    /**
-     * 购买股票
-     */
-    fun buyStock(request: BuyRequest) = viewModelScope.launch {
+    private val _error = MutableLiveData<String>()
+    val error: LiveData<String> get() = _error
+
+    fun loadStocksAndUsers(apiService: ApiService) = viewModelScope.launch {
         try {
-            RetrofitClient.apiService.buyStock(request)
-            emitSuccess("买入成功")
+            val stocksResponse = apiService.getStocks()
+            if (stocksResponse.isSuccessful) {
+                _stocks.postValue(stocksResponse.body())
+            } else {
+                _error.postValue("Failed to load stocks: ${stocksResponse.code()}")
+            }
+
+            val usersResponse = apiService.getUsers()
+            if (usersResponse.isSuccessful) {
+                _users.postValue(usersResponse.body())
+            } else {
+                _error.postValue("Failed to load users: ${usersResponse.code()}")
+            }
         } catch (e: Exception) {
-            emitError(e)
+            _error.postValue("Network error: ${e.message}")
         }
-    }
-
-    /**
-     * 发送成功事件
-     */
-    private fun emitSuccess(message: String) {
-        _buyResult.postValue(Result.Success(message))
-    }
-
-    /**
-     * 发送错误事件
-     */
-    private fun emitError(exception: Exception) {
-        _buyResult.postValue(Result.Error(exception))
     }
 }

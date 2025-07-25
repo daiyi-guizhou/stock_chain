@@ -2,29 +2,15 @@ package com.example.stockapp.network
 
 import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Body
 import retrofit2.http.Path
 
-import com.example.stockapp.ui.BuyRequest
-import com.example.stockapp.ui.SellRequest
+import com.example.stockapp.ui.StockInfo
+import com.example.stockapp.ui.UserInfo
 
 interface ApiService {
-    @POST("init")
-    suspend fun initLedger(): Response<Unit>
+    @GET("stocks")
+    suspend fun getStocks(): Response<Map<String, StockInfo>>
 
-    @POST("buy")
-    suspend fun buyStock(@Body request: BuyRequest): Response<Unit>
-
-    @POST("sell")
-    suspend fun sellStock(@Body request: SellRequest): Response<Double>
-
-    @GET("price/{stockId}")
-    suspend fun getStockPrice(@Path("stockId") stockId: String): Response<Double>
-
-    @GET("user/{username}/stocks")
-    suspend fun getUserStocks(@Path("username") username: String): Response<Map<String, Int>>
-
-    @GET("user/{username}/value")
-    suspend fun getUserTotalValue(@Path("username") username: String): Response<Double>
+    @GET("users")
+    suspend fun getUsers(): Response<Map<String, UserInfo>>
 }
