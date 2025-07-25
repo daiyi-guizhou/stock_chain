@@ -7,19 +7,19 @@ import (
 	"github.com/hyperledger/fabric-contract-api-go/v2/contractapi"
 )
 
-// StockToken 表示特斯拉股票代币的基本信息 
+// StockToken 表示股票代币的基本信息
 type StockToken struct {
-	Symbol   string  `json:"symbol"`   // 股票代码 (TSLA)
+	Symbol   string  `json:"symbol"`   // 股票代码
 	Price    float64 `json:"price"`    // 当前股价
 	Quantity int     `json:"quantity"` // 持有数量
 }
 
 // UserAccount 表示一个用户的账户信息
 type UserAccount struct {
-	Name     string             `json:"name"`     // 用户名
-	Stocks   map[string]int     `json:"stocks"`   // 持有的股票代币: key=stockID, value=数量
-	Balance  float64            `json:"balance"`  // 可用余额
-	History  []string           `json:"history"`  // 交易历史
+	Name     string         `json:"name"`     // 用户名
+	Stocks   map[string]int `json:"stocks"`   // 持有的股票代币: key=stockID, value=数量
+	Balance  float64        `json:"balance"`  // 可用余额
+	History  []string       `json:"history"`  // 交易历史 ⬅️ 本字段必须初始化
 }
 
 // StockSmartContract 实现股票代币化逻辑
@@ -27,28 +27,66 @@ type StockSmartContract struct {
 	contractapi.Contract
 }
 
-// InitLedger 初始化账本，发行特斯拉股票并设置默认价格
+// InitLedger 初始化账本，发行多种股票并设置默认价格
 func (s *StockSmartContract) InitLedger(ctx contractapi.TransactionContextInterface) error {
-	stock := StockToken{
-		Symbol:   "TSLA",
-		Price:    180.5,
-		Quantity: 1000000, // 初始供应量
-	}
-	stockJSON, _ := json.Marshal(stock)
-	err := ctx.GetStub().PutState("TSLA", stockJSON)
-	if err != nil {
-		return fmt.Errorf("failed to put initial Tesla stock into ledger: %v", err)
+	// 初始化多种股票
+	stocks := []StockToken{
+		{Symbol: "TSLA", Price: 180.5, Quantity: 1000000},   // 特斯拉
+		{Symbol: "BABA", Price: 85.2, Quantity: 2000000},    // 阿里巴巴
+		{Symbol: "0700.HK", Price: 320.0, Quantity: 500000}, // 腾讯
+		{Symbol: "AAPL", Price: 150.0, Quantity: 1500000},   // 苹果
+		{Symbol: "META", Price: 280.7, Quantity: 800000},    // Meta(Facebook)
 	}
 
-	// 初始化几个测试用户
+	// 将所有股票存入账本，使用 stock_ 前缀
+	for _, stock := range stocks {
+		stockJSON, _ := json.Marshal(stock)
+		stockKey := "stock_" + stock.Symbol
+		err := ctx.GetStub().PutState(stockKey, stockJSON)
+		if err != nil {
+			return fmt.Errorf("failed to put stock %s into ledger: %v", stock.Symbol, err)
+		}
+	}
+
+	// 初始化多个测试用户
 	users := []UserAccount{
-		{Name: "Alice", Stocks: make(map[string]int)},
-		{Name: "Bob", Stocks: make(map[string]int)},
+		{
+			Name:    "Alice",
+			Stocks:  map[string]int{"TSLA": 100, "AAPL": 50},
+			Balance: 50000.0,
+			History: []string{"Initial account setup"},
+		},
+		{
+			Name:    "Bob",
+			Stocks:  map[string]int{"BABA": 200, "META": 80},
+			Balance: 75000.0,
+			History: []string{"Initial account setup"},
+		},
+		{
+			Name:    "Charlie",
+			Stocks:  map[string]int{"0700.HK": 150, "TSLA": 75},
+			Balance: 60000.0,
+			History: []string{"Initial account setup"},
+		},
+		{
+			Name:    "David",
+			Stocks:  map[string]int{"AAPL": 120, "META": 60},
+			Balance: 45000.0,
+			History: []string{"Initial account setup"},
+		},
+		{
+			Name:    "Eve",
+			Stocks:  map[string]int{"BABA": 180, "0700.HK": 90},
+			Balance: 55000.0,
+			History: []string{"Initial account setup"},
+		},
 	}
 
+	// 将所有用户存入账本
 	for _, user := range users {
+		userKey := "user_" + user.Name
 		userJSON, _ := json.Marshal(user)
-		err = ctx.GetStub().PutState("user_"+user.Name, userJSON)
+		err := ctx.GetStub().PutState(userKey, userJSON)
 		if err != nil {
 			return fmt.Errorf("failed to initialize user %s: %v", user.Name, err)
 		}
@@ -59,104 +97,105 @@ func (s *StockSmartContract) InitLedger(ctx contractapi.TransactionContextInterf
 
 // GetAllAssets 返回账本中的所有资产（股票和用户账户）
 func (s *StockSmartContract) GetAllAssets(ctx contractapi.TransactionContextInterface) (map[string]interface{}, error) {
-    resultsIterator, err := ctx.GetStub().GetStateByRange("", "")
-    if err != nil {
-        return nil, err
-    }
-    defer resultsIterator.Close()
+	resultsIterator, err := ctx.GetStub().GetStateByRange("", "")
+	if err != nil {
+		return nil, err
+	}
+	defer resultsIterator.Close()
 
-    assets := make(map[string]interface{})
-    for resultsIterator.HasNext() {
-        queryResponse, err := resultsIterator.Next()
-        if err != nil {
-            return nil, err
-        }
+	assets := make(map[string]interface{})
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return nil, err
+		}
 
-        key := queryResponse.Key
-        // 根据键名判断数据类型
-        if key == "TSLA" {
-            var stock StockToken
-            err = json.Unmarshal(queryResponse.Value, &stock)
-            if err != nil {
-                continue
-            }
-            assets[key] = stock
-        } else if len(key) > 5 && key[:5] == "user_" {
-            var user UserAccount
-            err = json.Unmarshal(queryResponse.Value, &user)
-            if err != nil {
-                continue
-            }
-            assets[key] = user
-        }
-    }
+		key := queryResponse.Key
+		// 根据键名判断数据类型
+		if len(key) > 6 && key[:6] == "stock_" {
+			var stock StockToken
+			err = json.Unmarshal(queryResponse.Value, &stock)
+			if err != nil {
+				continue
+			}
+			assets[key] = stock
+		} else if len(key) > 5 && key[:5] == "user_" {
+			var user UserAccount
+			err = json.Unmarshal(queryResponse.Value, &user)
+			if err != nil {
+				continue
+			}
+			assets[key] = user
+		}
+	}
 
-    return assets, nil
+	return assets, nil
 }
 
 // GetAllStock 返回账本中的所有股票信息
 func (s *StockSmartContract) GetAllStock(ctx contractapi.TransactionContextInterface) (map[string]StockToken, error) {
-    resultsIterator, err := ctx.GetStub().GetStateByRange("", "")
-    if err != nil {
-        return nil, err
-    }
-    defer resultsIterator.Close()
+	resultsIterator, err := ctx.GetStub().GetStateByRange("", "")
+	if err != nil {
+		return nil, err
+	}
+	defer resultsIterator.Close()
 
-    stocks := make(map[string]StockToken)
-    for resultsIterator.HasNext() {
-        queryResponse, err := resultsIterator.Next()
-        if err != nil {
-            return nil, err
-        }
+	stocks := make(map[string]StockToken)
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return nil, err
+		}
 
-        key := queryResponse.Key
-        // 只处理股票数据（目前只有TSLA，但可以扩展）
-        if key == "TSLA" {
-            var stock StockToken
-            err = json.Unmarshal(queryResponse.Value, &stock)
-            if err != nil {
-                continue
-            }
-            stocks[key] = stock
-        }
-    }
+		key := queryResponse.Key
+		// 只处理股票数据（使用 stock_ 前缀）
+		if len(key) > 6 && key[:6] == "stock_" {
+			var stock StockToken
+			err = json.Unmarshal(queryResponse.Value, &stock)
+			if err != nil {
+				continue
+			}
+			stocks[key] = stock
+		}
+	}
 
-    return stocks, nil
+	return stocks, nil
 }
 
 // GetAllUser 返回账本中的所有用户信息
 func (s *StockSmartContract) GetAllUser(ctx contractapi.TransactionContextInterface) (map[string]UserAccount, error) {
-    resultsIterator, err := ctx.GetStub().GetStateByRange("", "")
-    if err != nil {
-        return nil, err
-    }
-    defer resultsIterator.Close()
+	resultsIterator, err := ctx.GetStub().GetStateByRange("", "")
+	if err != nil {
+		return nil, err
+	}
+	defer resultsIterator.Close()
 
-    users := make(map[string]UserAccount)
-    for resultsIterator.HasNext() {
-        queryResponse, err := resultsIterator.Next()
-        if err != nil {
-            return nil, err
-        }
+	users := make(map[string]UserAccount)
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return nil, err
+		}
 
-        key := queryResponse.Key
-        // 只处理用户数据
-        if len(key) > 5 && key[:5] == "user_" {
-            var user UserAccount
-            err = json.Unmarshal(queryResponse.Value, &user)
-            if err != nil {
-                continue
-            }
-            users[key] = user
-        }
-    }
+		key := queryResponse.Key
+		// 只处理用户数据
+		if len(key) > 5 && key[:5] == "user_" {
+			var user UserAccount
+			err = json.Unmarshal(queryResponse.Value, &user)
+			if err != nil {
+				continue
+			}
+			users[key] = user
+		}
+	}
 
-    return users, nil
+	return users, nil
 }
 
 // BuyStock 用户买入股票
 func (s *StockSmartContract) BuyStock(ctx contractapi.TransactionContextInterface, username string, stockID string, amount int, payment float64) error {
-	stockJSON, err := ctx.GetStub().GetState(stockID)
+	stockKey := "stock_" + stockID
+	stockJSON, err := ctx.GetStub().GetState(stockKey)
 	if err != nil || stockJSON == nil {
 		return fmt.Errorf("stock %s not found", stockID)
 	}
@@ -172,6 +211,11 @@ func (s *StockSmartContract) BuyStock(ctx contractapi.TransactionContextInterfac
 
 	var user UserAccount
 	json.Unmarshal(userJSON, &user)
+
+	// 确保 History 字段不为 nil
+	if user.History == nil {
+		user.History = []string{}
+	}
 
 	totalCost := stock.Price * float64(amount)
 	if payment < totalCost {
@@ -194,13 +238,14 @@ func (s *StockSmartContract) BuyStock(ctx contractapi.TransactionContextInterfac
 	if err != nil {
 		return err
 	}
-	err = ctx.GetStub().PutState(stockID, stockJSON)
+	err = ctx.GetStub().PutState(stockKey, stockJSON)
 	return err
 }
 
 // SellStock 用户卖出股票
 func (s *StockSmartContract) SellStock(ctx contractapi.TransactionContextInterface, username string, stockID string, amount int) (float64, error) {
-	stockJSON, err := ctx.GetStub().GetState(stockID)
+	stockKey := "stock_" + stockID
+	stockJSON, err := ctx.GetStub().GetState(stockKey)
 	if err != nil || stockJSON == nil {
 		return 0, fmt.Errorf("stock %s not found", stockID)
 	}
@@ -216,6 +261,11 @@ func (s *StockSmartContract) SellStock(ctx contractapi.TransactionContextInterfa
 
 	var user UserAccount
 	json.Unmarshal(userJSON, &user)
+
+	// 确保 History 字段不为 nil
+	if user.History == nil {
+		user.History = []string{}
+	}
 
 	if user.Stocks[stockID] < amount {
 		return 0, fmt.Errorf("insufficient shares to sell")
@@ -239,14 +289,15 @@ func (s *StockSmartContract) SellStock(ctx contractapi.TransactionContextInterfa
 	if err != nil {
 		return 0, err
 	}
-	err = ctx.GetStub().PutState(stockID, stockJSON)
+	err = ctx.GetStub().PutState(stockKey, stockJSON)
 
 	return revenue, err
 }
 
 // GetStockPrice 查询当前股价
 func (s *StockSmartContract) GetStockPrice(ctx contractapi.TransactionContextInterface, stockID string) (float64, error) {
-	stockJSON, err := ctx.GetStub().GetState(stockID)
+	stockKey := "stock_" + stockID
+	stockJSON, err := ctx.GetStub().GetState(stockKey)
 	if err != nil || stockJSON == nil {
 		return 0, fmt.Errorf("stock %s not found", stockID)
 	}
@@ -283,7 +334,8 @@ func (s *StockSmartContract) GetUserTotalValue(ctx contractapi.TransactionContex
 
 	total := user.Balance
 	for stockID, count := range user.Stocks {
-		stockJSON, err := ctx.GetStub().GetState(stockID)
+		stockKey := "stock_" + stockID
+		stockJSON, err := ctx.GetStub().GetState(stockKey)
 		if err != nil || stockJSON == nil {
 			continue
 		}

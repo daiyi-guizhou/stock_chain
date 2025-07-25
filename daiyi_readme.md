@@ -47,4 +47,10 @@ go mod tidy
 # 再次运行服务
 ps -ef |grep main.go|grep -v color|awk '{print $2}'|xargs kill -9 ;
 go run main.go
+
+
+# 验证数据
+curl -XGET http://localhost:8080/assets
+curl -XGET http://localhost:8080/stocks
+curl -XGET http://localhost:8080/users
 ```

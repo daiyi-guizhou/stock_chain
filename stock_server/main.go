@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	// "net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hyperledger/fabric-gateway/pkg/client"
@@ -54,7 +53,12 @@ func main() {
 		handler.GetStockPrice(contract, c)
 	})
 
-	// 查询用户持仓
+	// 查询用户持仓数量
+	r.GET("/user/:username/stocks/:stockID", func(c *gin.Context) {
+		handler.GetUserStockCount(contract, c)
+	})
+
+	// 查询用户所有持仓
 	r.GET("/user/:username/stocks", func(c *gin.Context) {
 		handler.GetUserStocks(contract, c)
 	})
@@ -62,6 +66,26 @@ func main() {
 	// 查询用户总资产
 	r.GET("/user/:username/value", func(c *gin.Context) {
 		handler.GetUserTotalValue(contract, c)
+	})
+
+	// 获取账本中所有资产（股票 + 用户）
+	r.GET("/assets", func(c *gin.Context) {
+		handler.GetAllAssets(contract, c)
+	})
+
+	// 获取账本中所有股票
+	r.GET("/stocks", func(c *gin.Context) {
+		handler.GetAllStocks(contract, c)
+	})
+
+	// 获取账本中所有用户
+	r.GET("/users", func(c *gin.Context) {
+		handler.GetAllUsers(contract, c)
+	})
+
+	// 关闭用户账户
+	r.DELETE("/user/:username", func(c *gin.Context) {
+		handler.CloseAccount(contract, c)
 	})
 
 	fmt.Println("Server running on :8080")
