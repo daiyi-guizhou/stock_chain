@@ -3,49 +3,10 @@ Kotlin（推荐）
 Google官方首推的Android开发语言
 
 
-app/
-├── src/main/
-│   ├── AndroidManifest.xml
-│   ├── java/com/example/stockapp/
-│   │   ├── network/
-│   │   │   ├── ApiService.kt
-│   │   │   └── RetrofitClient.kt
-│   │   ├── ui/
-│   │   │   ├── MainActivity.kt
-│   │   │   ├── BuyStockActivity.kt
-│   │   │   └── ...
-│   │   └── viewmodel/
-│   │       └── StockViewModel.kt
-│   └── res/
-│       ├── layout/
-│       │   ├── activity_main.xml
-│       │   ├── activity_buy.xml
-│       │   └── ...
 
 安装 Android Studio  https://developer.android.com/studio?hl=zh-cn
 配置好 Android SDK
 确保后端服务正在运行（您已经完成）
-
-2. 配置 Android SDK
-打开 Android Studio
-如果是首次启动，会进入欢迎界面，点击 "Start a new Android Studio project" 或 "Configure" > "SDK Manager"
-在 SDK Manager 中：
-    选择 "Android SDK" 标签页
-    确认已安装最新版本的 "Android SDK Platform"
-    推荐安装最新的 "Android SDK Build-Tools"
-    确保安装了 "Android SDK Platform-Tools" 和 "Android SDK Tools"
-点击 "Apply" 安装所选组件
-
-二、打开项目
-1. 打开项目文件夹
-启动 Android Studio。
-点击 "Open an existing Android Studio project"。
-选择你的项目文件夹（即包含 build.gradle 的目录）。
-等待项目同步完成。
-
-
-三、连接设备
-你可以选择以下任意一种方式运行应用：
 
 方法一：使用真机调试
 使用 USB 将手机连接到电脑。
@@ -81,4 +42,27 @@ Android Studio 会自动编译项目并安装到你选择的设备上。
     解决可能出现的任何导入或依赖问题
 完成这些步骤后，您的项目应该能够在 Android Studio 中正常工作并运行。
 
+app/
+├── src/main/
+│   ├── java/com/example/stockapp/     # 应用的Java/Kotlin源代码
+│   │   ├── adapter/                   # RecyclerView适配器类
+│   │   ├── model/                     # 数据模型类
+│   │   ├── network/                   # 网络请求相关类
+│   │   ├── ui/                        # 界面Activity和Fragment
+│   │   └── viewmodel/                # ViewModel类（MVVM架构）
+│   ├── res/                          # 应用资源文件
+│   │   ├── layout/                   # 布局文件（XML）
+│   │   └── values/                   # 资源值文件（字符串、颜色、样式等）
+│   └── AndroidManifest.xml           # 应用配置文件
+└── readme.md                         # 项目说明文档
 
+
+1. UI布局文件 (res/layout/)
+activity_main.xml - 主界面布局文件，包含股票和用户信息展示、查询功能等
+activity_buy.xml - 购买股票界面布局
+item_stock.xml - 股票列表项的布局样式
+item_user.xml - 用户列表项的布局样式
+2. 资源文件 (res/values/)
+colors.xml - 定义应用中使用的颜色值
+strings.xml - 定义应用中的字符串资源，便于国际化
+styles.xml - 定义应用的样式和主题

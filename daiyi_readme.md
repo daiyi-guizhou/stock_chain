@@ -79,3 +79,11 @@ netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 conne
 
 netsh advfirewall firewall add rule name="Open Port 8080" dir=in action=allow protocol=TCP localport=8080
 ```
+
+这是我的项目配置，分为三个部分，
+    第一部分：fabric-sample-main 为 开源区块链 hyperledger fabric 的项目, 里面的智能合约  fabric-samples-main\asset-transfer-basic\chaincode-go\chaincode\stockSmartContract.go 是关于股票的；
+    第二部分： stock_server 是 go 语言的后端服务端，主要是listen 8080 端口，接收来自前端的请求，然后调用智能合约进行操作；
+    第三部分： android_app 是 android 前端项目，主要是展示数据和与后端 stock_server 进行交互；
+已知我的服务可以连接打通，android_app 可以连接 stock_server，也可以获取智能合约数据； 现在我希望你根据智能合约的内容，在我的android_app 上提供 用户买入股票，用户卖出股票，查询用户持有某股票的数量，查询用户总资产，删除用户的所有持仓和账户信息 功能，并且可以与后端进行交互，实现数据的实时更新和展示。
+
+# android端开发

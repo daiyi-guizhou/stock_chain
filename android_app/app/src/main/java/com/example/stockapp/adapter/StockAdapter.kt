@@ -5,9 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.stockapp.R  // 添加这一行
-import com.example.stockapp.ui.StockInfo
-import java.util.*
+import com.example.stockapp.R
+import com.example.stockapp.model.StockInfo
 
 class StockAdapter(private val stocks: Map<String, StockInfo>) :
     RecyclerView.Adapter<StockAdapter.StockViewHolder>() {
@@ -26,7 +25,7 @@ class StockAdapter(private val stocks: Map<String, StockInfo>) :
     override fun onBindViewHolder(holder: StockViewHolder, position: Int) {
         val stock = stocks.values.toList()[position]
         holder.symbolTextView.text = stock.symbol
-        holder.priceTextView.text = "Price: ${stock.price}"
+        holder.priceTextView.text = "Price: $${String.format("%.2f", stock.price)}"
         holder.quantityTextView.text = "Quantity: ${stock.quantity}"
     }
 
