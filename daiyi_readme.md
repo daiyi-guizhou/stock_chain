@@ -66,3 +66,16 @@ android_app/app/src/main/java/com/example/stockapp/adapter/StockAdapter.kt
 android_app/app/src/main/res/layout/item_stock.xml
 android_app/app/src/main/res/layout/activity_main.xml
 修改 activity_main.xml：添加用于展示数据的 RecyclerView。
+
+```xml
+
+    // private const val BASE_URL = "http://172.25.72.89:8080/" // 使用 Android 模拟器访问本机  这是 linux 虚拟机 里的ip
+    private const val BASE_URL = "http://192.168.112.47:8080/" // 使用 Android 模拟器访问本机  这是windows 的ip
+```
+
+`在Windows管理员权限的命令提示符中执行以下命令`
+```cmd
+netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=8080 connectaddress=172.25.72.89
+
+netsh advfirewall firewall add rule name="Open Port 8080" dir=in action=allow protocol=TCP localport=8080
+```
