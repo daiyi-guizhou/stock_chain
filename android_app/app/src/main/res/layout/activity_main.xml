@@ -59,7 +59,23 @@
             android:layout_height="wrap_content"
             android:text="查询用户持仓"
             android:layout_marginBottom="16dp" />
+            <!-- 这段XML代码定义了一个Android按钮控件，功能是查询用户持仓信息。按钮占据父容器的完整宽度，高度自适应内容，显示文本为"查询用户持仓"，底部留有16dp的外边距 -->
+            <!-- Activity中的事件监听
 
+            在 MainActivity 中会为 btnQueryUserStocks 设置点击事件监听器
+            通常使用 setOnClickListener 方法处理点击事件
+            数据获取流程
+
+            点击事件处理程序会从 spinnerSelectUser 中获取当前选中的用户
+            调用后端服务或本地数据库查询该用户的持仓信息
+            查询结果会更新到 userStocksRecyclerView 中显示
+            UI更新
+
+            userStocksRecyclerView 会根据查询到的持仓数据更新显示内容
+            如果有错误或空数据，可能会显示相应的提示信息 -->
+
+
+            
         <!-- 用户持仓展示区 -->
         <TextView
             android:layout_width="match_parent"

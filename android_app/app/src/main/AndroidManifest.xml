@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.stockapp">
-
+<!-- <manifest> 是根元素，定义整个应用程序的配置
+xmlns:android 定义Android命名空间，允许使用Android特定的属性
+package 指定应用程序的包名，必须唯一，类似于Django项目的名称 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<!-- 声明应用程序需要的权限：
 
+INTERNET 权限允许应用访问网络，这是与后端API通信所必需的
+ACCESS_NETWORK_STATE 权限允许应用检查网络连接状态 -->
+
+<!-- <application> 标签定义应用程序的基本属性：
+
+allowBackup="true" 允许应用数据备份
+icon 指定应用图标，这里使用系统默认图标
+label 指定应用名称，引用了字符串资源
+theme 指定应用主题样式
+usesCleartextTraffic="true" 允许使用明文HTTP流量（而非HTTPS），便于开发测试 -->
     <application
         android:allowBackup="true"
         android:icon="@android:drawable/sym_def_app_icon"
@@ -19,10 +32,33 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- 声明一个Activity（界面组件）：
+            name 指定Activity的类名，.ui.MainActivity 表示完整类名为 com.example.stockapp.ui.MainActivity
+            exported="true" 表示该Activity可以被其他应用启动，这是应用的主入口Activity必须设置的 -->
+        <!-- <intent-filter> 定义Activity的启动意图：
+            MAIN action 表示这是应用的主要入口点
+            LAUNCHER category 表示该Activity会出现在应用启动器中（手机桌面的应用列表） -->
+
+        <!-- 声明另一个Activity：
+            BuyStockActivity 是购买股票的界面
+            exported="false" 表示该Activity只能由本应用内部启动，不能被其他应用直接启动 -->
+
 
         <activity 
             android:name=".ui.BuyStockActivity"
             android:exported="false"/>
     </application>
+<!-- 这个 AndroidManifest.xml 文件相当于Django中的 settings.py 和URL配置的结合体，它告诉Android系统：
 
+应用的基本信息（包名、图标、名称等）
+应用需要哪些权限（网络访问）
+应用包含哪些组件（Activity）
+哪个Activity是应用的入口点
+各组件的访问权限
+与Django的对比：
+
+<manifest> 类似于Django项目的整体配置
+<uses-permission> 类似于Django中需要安装的第三方库或中间件
+<application> 类似于Django中 INSTALLED_APPS 的配置
+<activity> + <intent-filter> 类似于Django中的URL路由配置，定义了应用的入口点 -->
 </manifest>
