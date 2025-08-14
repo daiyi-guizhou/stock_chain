@@ -122,6 +122,7 @@ class MainActivity : AppCompatActivity() {
     // 声明用户和股票列表，用于存储从服务器获取的数据。
     private var userList: List<String> = listOf()
     private var stockList: List<String> = listOf()
+    private var stockPriceMap: Map<String, Double> = emptyMap()
     // 初始化 = listOf(): 使用 listOf() 函数创建一个空的只读字符串列表
 
     /**
@@ -313,8 +314,9 @@ class MainActivity : AppCompatActivity() {
             if (stocks != null) {
                 stockRecyclerView.adapter = StockAdapter(stocks)
                 // 更新股票列表
-                // stockList = stocks.keys.toList()  
+                // stockList = stocks.keys.toList()
                 stockList = stocks.values.map { it.symbol }.toList()
+                stockPriceMap = stocks.values.associateBy({ it.symbol }, { it.price })
 
                 updateSpinners()
             } else {
@@ -439,12 +441,24 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            for (stock in stockPriceMap) {
+
+                if (stock.key == selectedStock) {
+                    // 获取股票价格
+                    val stockPrice = stock.value
+                    // 计算支付金额
+                    val payment = amount * stockPrice
+                    Log.d("MainActivity", "Buying - User: $selectedUser, Stock: $selectedStock, Amount: $amount, Stock Price: $stockPrice, Payment: $payment")
+                    stockViewModel.buyStock(selectedUser, selectedStock, amount, payment, RetrofitClient.apiService)
+                    return@setOnClickListener
+                }
+            }
             // 简化处理，假设股价为100
-            val payment = amount * 100.0
+            // val payment = amount * 100.0
             
             // 在这里添加日志输出
-            Log.d("MainActivity", "Buying - User: $selectedUser, Stock: $selectedStock, Amount: $amount, Payment: $payment")
-            stockViewModel.buyStock(selectedUser, selectedStock, amount, payment, RetrofitClient.apiService)
+//            Log.d("MainActivity", "Buying - User: $selectedUser, Stock: $selectedStock, Amount: $amount, Payment: $payment")
+//            stockViewModel.buyStock(selectedUser, selectedStock, amount, payment, RetrofitClient.apiService)
         }
 
         // 设置买入按钮的点击监听器：
