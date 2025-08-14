@@ -36,7 +36,7 @@ usesCleartextTraffic="true" 允许使用明文HTTP流量（而非HTTPS），便�
             name 指定Activity的类名，.ui.MainActivity 表示完整类名为 com.example.stockapp.ui.MainActivity
             exported="true" 表示该Activity可以被其他应用启动，这是应用的主入口Activity必须设置的 -->
         <!-- <intent-filter> 定义Activity的启动意图：
-            MAIN action 表示这是应用的主要入口点
+            action.MAIN  表示这是应用的主要入口点
             LAUNCHER category 表示该Activity会出现在应用启动器中（手机桌面的应用列表） -->
 
         <!-- 声明另一个Activity：

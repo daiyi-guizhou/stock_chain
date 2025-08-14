@@ -16,44 +16,46 @@ class StockViewModel : ViewModel() {
     val users: LiveData<Map<String, UserInfo>?> get() = _users
     // 用户数据以 Map<String, User> 格式存储，其中 key 是用户标识，value 是用户对象
 
-    // private: 访问修饰符，表示这个变量只能在 StockViewModel 类内部访问
-    // val: 声明一个只读属性（不可重新赋值）
-    // _users: 变量名，下划线前缀是约定俗成的命名方式，表示这是内部使用的变量
-    // MutableLiveData<Map<String, UserInfo>?>: 变量类型，具体含义如下：
-    //     MutableLiveData: Android架构组件，用于存储可变数据并通知UI更新
-    //     <Map<String, UserInfo>?>: 泛型参数，表示存储的数据类型
-    //         Map<String, UserInfo>: 键值对集合，键是字符串，值是用户信息对象
-    //         ?: 可空标记，表示这个Map可能为null
+        // private: 访问修饰符，表示这个变量只能在 StockViewModel 类内部访问
+        // val: 声明一个只读属性（不可重新赋值）
+        // _users: 变量名，下划线前缀是约定俗成的命名方式，表示这是内部使用的变量
+        // MutableLiveData<Map<String, UserInfo>?>: 变量类型，具体含义如下：
+        //     MutableLiveData: Android架构组件，用于存储可变数据并通知UI更新
+        //     <Map<String, UserInfo>?>: 泛型参数，表示存储的数据类型
+        //         Map<String, UserInfo>: 键值对集合，键是字符串，值是用户信息对象
+        //         ?: 可空标记，表示这个Map可能为null
 
-    // val: 声明一个只读属性
-    // users: 对外暴露的属性名（没有下划线）
-    // LiveData<Map<String, UserInfo>?>: 只读数据类型（与上面的MutableLiveData兼容）
-    // get() = _users: 自定义getter，当访问users时实际返回_users的值
+        // val: 声明一个只读属性
+        // users: 对外暴露的属性名（没有下划线）
+        // LiveData<Map<String, UserInfo>?>: 只读数据类型（与上面的MutableLiveData兼容）
+        // get() = _users: 自定义getter，当访问users时实际返回_users的值
 
-    // 封装性:
-    // _users 是私有的，外部无法直接修改
-    // users 是公开的，但只能读取不能修改
+        // 封装性:
+        // _users 是私有的，外部无法直接修改
+        // users 是公开的，但只能读取不能修改
 
-    // 数据驱动UI:
-    // 使用 MutableLiveData 可以在数据变化时自动通知UI更新
-    // 当调用 _users.postValue() 时，所有观察 users 的UI组件会自动刷新
+        // 数据驱动UI:
+        // 使用 MutableLiveData 可以在数据变化时自动通知UI更新
+        // 当调用 _users.postValue() 时，所有观察 users 的UI组件会自动刷新
 
-    // MVVM架构:
-    // 这是Android推荐的MVVM架构模式的核心实现
-    // ViewModel管理数据，UI层通过观察LiveData获取最新数据
+        // MVVM架构:
+        // 这是Android推荐的MVVM架构模式的核心实现
+        // ViewModel管理数据，UI层通过观察LiveData获取最新数据
 
-        // // 在ViewModel内部更新数据
-        // _users.postValue(usersResponse.body()) // 安全地更新数据
+            // // 在ViewModel内部更新数据
+            // _users.postValue(usersResponse.body()) // 安全地更新数据
 
-        // // 在Activity/Fragment中观察数据
-        // stockViewModel.users.observe(this) { users -> 
-        //     // 当_users数据更新时，这里会自动执行
-        //     updateUI(userData) 
-        // }
+            // // 在Activity/Fragment中观察数据
+            // stockViewModel.users.observe(this) { users -> 
+            //     // 当_users数据更新时，这里会自动执行
+            //     updateUI(userData) 
+            // }
 
 
-    private val _userStocks = MutableLiveData<List<UserStock>>()
-    val userStocks: LiveData<List<UserStock>> get() = _userStocks
+//    private val _userStocks = MutableLiveData<List<UserStock>>()
+//    val userStocks: LiveData<List<UserStock>> get() = _userStocks
+    private val _userStocksResp = MutableLiveData<UserStocksResponse>()
+    val userStocksResp: LiveData<UserStocksResponse> get() = _userStocksResp
 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
@@ -137,7 +139,9 @@ class StockViewModel : ViewModel() {
                     //         "TSLA": 100
                     //     }
                     // }
-                    _userStocks.postValue(response.body() ?: emptyList())
+                    // val stockMap = response.body()?.get("stocks")
+                    // _userStocksResp.postValue(stockMap)
+                    _userStocksResp.postValue(response.body())
                 } else {
                     _error.postValue("Failed to load user stocks: ${response.code()}")
                 }

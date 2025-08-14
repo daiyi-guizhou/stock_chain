@@ -24,6 +24,14 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp" />
 
+            <!-- 这段XML代码在布局文件中定义了一个RecyclerView组件：
+            android:id="@+id/userRecyclerView" - 为这个组件分配了一个唯一ID，可以在代码中引用
+            设置了宽度为父容器全宽，高度根据内容自适应 
+            1. TextView - 用户信息标题
+            2 RecyclerView - 用户信息列表
+            
+            -->
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -76,7 +84,7 @@
 
 
             
-        <!-- 用户持仓展示区 -->
+        <!-- 用户持仓展示区 -->    
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -48,7 +48,7 @@ interface ApiService {
 
     // 查询用户所有持仓
     @GET("user/{username}/stocks")
-    suspend fun getUserStocks(@Path("username") username: String): Response<List<UserStock>>
+    suspend fun getUserStocks(@Path("username") username: String): Response<UserStocksResponse>
 
     // 删除用户的所有持仓和账户信息
     @DELETE("user/{username}")
