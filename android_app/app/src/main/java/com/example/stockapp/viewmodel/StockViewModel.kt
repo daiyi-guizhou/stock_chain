@@ -209,7 +209,9 @@ class StockViewModel : ViewModel() {
                 val response = apiService.getUserTotalValue(username)
                 if (response.isSuccessful) {
                     val totalValue = response.body()?.get("totalValue") ?: 0.0
-                    _error.postValue("User $username total value: $${String.format("%.2f", totalValue)}")
+                    val displayText = "用户 $username 总资产: \$${String.format("%.2f", totalValue)}"
+                    _error.postValue(displayText)
+                    // _error.postValue("User $username total value: $${String.format("%.2f", totalValue)}")
                 } else {
                     _error.postValue("Failed to get total value: ${response.code()}")
                 }

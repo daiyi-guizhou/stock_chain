@@ -99,8 +99,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var spinnerBuyStock: Spinner
     private lateinit var spinnerSellUser: Spinner
     private lateinit var spinnerSellStock: Spinner
-    private lateinit var spinnerQueryUser: Spinner
-    private lateinit var spinnerQueryStock: Spinner
     private lateinit var spinnerDeleteUser: Spinner
 
     // Buttons
@@ -108,7 +106,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnQueryUserStocks: Button
     private lateinit var btnBuy: Button
     private lateinit var btnSell: Button
-    private lateinit var btnQueryStockQuantity: Button
     private lateinit var btnQueryTotalValue: Button
     private lateinit var btnCloseAccount: Button
 
@@ -119,7 +116,6 @@ class MainActivity : AppCompatActivity() {
 
     // Result text views
     // 声明文本视图组件，用于显示查询结果。
-    private lateinit var tvStockQuantity: TextView
     private lateinit var tvTotalValue: TextView
 
     // Data lists
@@ -266,22 +262,18 @@ class MainActivity : AppCompatActivity() {
         spinnerBuyStock = findViewById(R.id.spinnerBuyStock)
         spinnerSellUser = findViewById(R.id.spinnerSellUser)
         spinnerSellStock = findViewById(R.id.spinnerSellStock)
-        spinnerQueryUser = findViewById(R.id.spinnerQueryUser)
-        spinnerQueryStock = findViewById(R.id.spinnerQueryStock)
         spinnerDeleteUser = findViewById(R.id.spinnerDeleteUser)
 
         // 初始化所有Spinner和Button组件
         btnQueryUserStocks = findViewById(R.id.btnQueryUserStocks)
         btnBuy = findViewById(R.id.btnBuy)
         btnSell = findViewById(R.id.btnSell)
-        btnQueryStockQuantity = findViewById(R.id.btnQueryStockQuantity)
         btnQueryTotalValue = findViewById(R.id.btnQueryTotalValue)
         btnCloseAccount = findViewById(R.id.btnCloseAccount)
 
         etBuyAmount = findViewById(R.id.etBuyAmount)
         etSellAmount = findViewById(R.id.etSellAmount)
 
-        tvStockQuantity = findViewById(R.id.tvStockQuantity)
         tvTotalValue = findViewById(R.id.tvTotalValue)
     }
 
@@ -355,7 +347,20 @@ class MainActivity : AppCompatActivity() {
         }
         // 观察错误信息，当发生错误时显示提示并记录日志。
         stockViewModel.error.observe(this) { error ->
-            Toast.makeText(this, "Error: $error", Toast.LENGTH_LONG).show()
+            // Toast.makeText(this, "Error: $error", Toast.LENGTH_LONG).show()
+            
+            if (error.startsWith("用户") && error.contains("总资产")) {
+                tvTotalValue.text = error
+            } else {
+                // 其他错误信息可以显示为Toast
+                Toast.makeText(this, "Error: $error", Toast.LENGTH_LONG).show()
+            }
+            // 2.2 Toast.makeText(...)
+            // 作用：在屏幕上显示一个短暂的提示消息。
+            // 参数解析：
+            //     this：当前的 Activity 上下文。
+            //     "Error: $error"：显示的错误信息，使用 Kotlin 的字符串插值语法 $error。
+            //     Toast.LENGTH_LONG：提示消息的显示时长，较长（约 3.5 秒）
             Log.e("MainActivity", "API Error: $error")
         }
     }
@@ -391,12 +396,10 @@ class MainActivity : AppCompatActivity() {
         spinnerSelectUser.adapter = userAdapter
         spinnerBuyUser.adapter = userAdapter
         spinnerSellUser.adapter = userAdapter
-        spinnerQueryUser.adapter = userAdapter
         spinnerDeleteUser.adapter = userAdapter
 
         spinnerBuyStock.adapter = stockAdapter
         spinnerSellStock.adapter = stockAdapter
-        spinnerQueryStock.adapter = stockAdapter
         // 将适配器应用到各个Spinner组件
     }
 
@@ -465,15 +468,9 @@ class MainActivity : AppCompatActivity() {
             stockViewModel.sellStock(selectedUser, selectedStock, amount, RetrofitClient.apiService)
         }
 
-        btnQueryStockQuantity.setOnClickListener {
-            val selectedUser = spinnerQueryUser.selectedItem?.toString() ?: return@setOnClickListener
-            val selectedStock = spinnerQueryStock.selectedItem?.toString() ?: return@setOnClickListener
-
-            stockViewModel.getUserStockCount(selectedUser, selectedStock, RetrofitClient.apiService)
-        }
 
         btnQueryTotalValue.setOnClickListener {
-            val selectedUser = spinnerQueryUser.selectedItem?.toString() ?: return@setOnClickListener
+            val selectedUser = spinnerSelectUser.selectedItem?.toString() ?: return@setOnClickListener
 
             stockViewModel.getUserTotalValue(selectedUser, RetrofitClient.apiService)
         }

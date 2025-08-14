@@ -99,6 +99,30 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp" />
 
+        <Button
+            android:id="@+id/btnQueryTotalValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="查询用户总资产"
+            android:layout_marginBottom="8dp" />
+
+        <!-- <TextView
+            android:id="@+id/tvTotalValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" /> -->
+        <TextView
+            android:id="@+id/tvTotalValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:padding="8dp"
+            android:background="#FFE0E0E0" />
+            <!-- android:background="@drawable/total_value_background" /> -->
+        
+        
         <!-- 买入股票 -->
         <TextView
             android:layout_width="match_parent"
@@ -171,52 +195,8 @@
             android:text="卖出"
             android:layout_marginBottom="16dp" />
 
-        <!-- 查询功能区 -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="查询功能"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
 
-        <Spinner
-            android:id="@+id/spinnerQueryUser"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
 
-        <Spinner
-            android:id="@+id/spinnerQueryStock"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
-
-        <Button
-            android:id="@+id/btnQueryStockQuantity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="查询用户持有股票数量"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/tvStockQuantity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
-
-        <Button
-            android:id="@+id/btnQueryTotalValue"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="查询用户总资产"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/tvTotalValue"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp" />
 
         <!-- 销户功能 -->
         <TextView
