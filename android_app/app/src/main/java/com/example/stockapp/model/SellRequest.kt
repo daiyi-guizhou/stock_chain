@@ -3,6 +3,6 @@ package com.example.stockapp.model
 
 data class SellRequest(
     val username: String,
-    val stockID: String,
+    val stock_id: String,
     val amount: Int
 )

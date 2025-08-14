@@ -151,10 +151,10 @@ class StockViewModel : ViewModel() {
         }
     }
 
-    fun buyStock(username: String, stockID: String, amount: Int, payment: Double, apiService: ApiService) {
+    fun buyStock(username: String, stock_id: String, amount: Int, payment: Double, apiService: ApiService) {
         viewModelScope.launch {
             try {
-                val request = BuyRequest(username, stockID, amount, payment)
+                val request = BuyRequest(username, stock_id, amount, payment)
                 val response = apiService.buyStock(request)
                 if (response.isSuccessful) {
                     // Reload data after successful purchase
@@ -169,10 +169,10 @@ class StockViewModel : ViewModel() {
         }
     }
 
-    fun sellStock(username: String, stockID: String, amount: Int, apiService: ApiService) {
+    fun sellStock(username: String, stock_id: String, amount: Int, apiService: ApiService) {
         viewModelScope.launch {
             try {
-                val request = SellRequest(username, stockID, amount)
+                val request = SellRequest(username, stock_id, amount)
                 val response = apiService.sellStock(request)
                 if (response.isSuccessful) {
                     // Reload data after successful sale

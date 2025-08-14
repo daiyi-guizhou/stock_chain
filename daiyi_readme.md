@@ -53,6 +53,37 @@ go run main.go
 curl -XGET http://localhost:8080/assets
 curl -XGET http://localhost:8080/stocks
 curl -XGET http://localhost:8080/users
+
+# 价格不对，购买失败
+curl -X POST http://localhost:8080/buy \  
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "Alice",
+    "stock_id": "TSLA",
+    "amount": 1,
+    "payment": 100.00
+  }'
+
+# 价格正确，购买成功
+curl -X POST http://localhost:8080/buy \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "Alice",
+    "stock_id": "TSLA",
+    "amount": 10,
+    "payment": 1805.00
+  }'
+{"message":"Buy transaction submitted successfully"}
+
+
+curl -X POST http://localhost:8080/sell \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "Alice",
+    "stock_id": "TSLA",
+    "amount": 5
+  }'
+  {"revenue":902.5}
 ```
 
 添加数据模型类：定义 StockInfo 和 UserInfo 数据模型类。

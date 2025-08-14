@@ -441,6 +441,9 @@ class MainActivity : AppCompatActivity() {
 
             // 简化处理，假设股价为100
             val payment = amount * 100.0
+            
+            // 在这里添加日志输出
+            Log.d("MainActivity", "Buying - User: $selectedUser, Stock: $selectedStock, Amount: $amount, Payment: $payment")
             stockViewModel.buyStock(selectedUser, selectedStock, amount, payment, RetrofitClient.apiService)
         }
 
@@ -465,6 +468,8 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            // 在这里添加日志输出
+            Log.d("MainActivity", "Sell - User: $selectedUser, Stock: $selectedStock, Amount: $amount")
             stockViewModel.sellStock(selectedUser, selectedStock, amount, RetrofitClient.apiService)
         }
 

@@ -8,6 +8,7 @@ import (
 	"github.com/hyperledger/fabric-gateway/pkg/client"
 	"server/config"
 	"server/handler"
+	"server/middleware"
 )
 
 func main() {
@@ -32,6 +33,9 @@ func main() {
 	contract := network.GetContract(config.ChaincodeName)
 
 	r := gin.Default()
+
+	// 添加请求日志中间件
+	r.Use(middleware.RequestLogger())
 
 	// 初始化账本
 	r.POST("/init", func(c *gin.Context) {
