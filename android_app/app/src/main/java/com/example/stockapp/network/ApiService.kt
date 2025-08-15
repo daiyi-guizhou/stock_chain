@@ -8,7 +8,8 @@ import retrofit2.http.*
 
 interface ApiService {
     companion object {
-        private const val BASE_URL = "http://192.168.112.47:8080/" // 根据实际情况修改
+        // private const val BASE_URL = "http://192.168.112.47:8080/" // 根据实际情况修改
+        private const val BASE_URL = "https://6bacc411f2f6.ngrok-free.app/" // 根据实际情况修改
 
         fun create(): ApiService {
             val retrofit = Retrofit.Builder()

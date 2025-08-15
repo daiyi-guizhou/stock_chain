@@ -7,7 +7,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
     // private const val BASE_URL = "http://172.25.72.89:8080/" // 使用 Android 模拟器访问本机
-    private const val BASE_URL = "http://192.168.232.47:8080/" // 使用 Android 模拟器访问本机
+    // private const val BASE_URL = "http://192.168.232.47:8080/" // 使用 Android 模拟器访问本机
+    private const val BASE_URL = "https://6bacc411f2f6.ngrok-free.app/" // 使用 Android 模拟器访问本机
 
     val apiService: ApiService by lazy {
         Retrofit.Builder()

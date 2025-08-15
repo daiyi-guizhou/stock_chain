@@ -279,3 +279,21 @@ graph TD
 
 这种设计实现了数据与界面的解耦，通过 ViewModel 管理数据状态，通过 LiveData 实现数据的响应式更新，保证了UI与数据的一致性。
 
+
+
+# 设置本地电脑 对外网开放
+### 1 你的 wifi 路由器 开放 NAT、端口转发，
+    网络设置 > NAT设置 > 虚拟服务器 或 端口映射 > 添加规则，- 添加端口转发 外网便可访问
+### 2 ngrok 内网穿透工具 （ngrok / frp）
+下载软件 ngrok   https://ngrok.com/downloads/windows?tab=download
+先配置 token, 再启动终端执行 ngrok.exe http 8080
+```shell
+ngrok config add-authtoken 31KGwZBhoJzf86hb7tmgi0Axd0a_7EtUbhAxs6oGopDJyrB4X
+
+ngrok http 8080                                                                                                    
+```
+效果 得到一个 公网url: `https://6bacc411f2f6.ngrok-free.app` 即可用它来访问本地服务
+```shell
+ngrok 
+Create instant endpoints for local containers within Docker Desktop →→  https://ngrok.com/r/docker                                                                                                                                            Session Status                online                                                                                    Account                       847210821@qq.com (Plan: Free)                                                             Version                       3.26.0                                                                                    Region                        Japan (jp)                                                                                Latency                       550ms                                                                                     Web Interface                 http://127.0.0.1:4040                                                                     Forwarding                    https://6bacc411f2f6.ngrok-free.app -> http://localhost:8080                                                                                                                                                      Connections                   ttl     opn     rt1     rt5     p50     p90                                                                             7       0       0.00    0.00    92.34   116.43                                                                                                                                                                    HTTP Requests                                                                                                           -------------                                                                                                                                                                                                                                   22:29:44.838 CST GET  /user/Bob/value           200 OK                                                                  22:29:42.693 CST GET  /user/Bob/stocks          200 OK                                                                  22:25:51.304 CST GET  /user/Bob/stocks          200 OK    
+```
